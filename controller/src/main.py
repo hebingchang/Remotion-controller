@@ -6,7 +6,7 @@ import sendkeys
 import win32api
 
 def send_cmd(cmd):
-    r = requests.get("http://192.168.78.1:3000/?cmd="+cmd)
+    r = requests.post("http://192.168.78.1:3000/?cmd="+cmd+"&power=3&temperature=0&mode=0")
     print r.content
 
 class SampleListener(Leap.Listener):
