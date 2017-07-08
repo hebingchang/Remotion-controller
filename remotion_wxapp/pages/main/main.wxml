@@ -1,0 +1,50 @@
+<!--main.wxml-->
+
+<view class="translation">
+    红外发射demo[空调]
+</view>
+
+<view class="show" >
+    <text class="number" wx:if="{{power==1}}">{{temperature}}\n</text>
+    <view class="mode">
+      <image class="icon" src="/images/cold.png" wx:if="{{power==1 && mode==0}}"></image>
+      <image class="icon" src="/images/heat.png" wx:if="{{power==1 && mode==1}}"></image>
+      <image class="icon" src="/images/dry.png" wx:if="{{power==1 && mode==2}}"></image>
+    </view>
+</view>
+
+<view class="T">
+  <image class="T" src="/images/up.png" bindtap="Up_arrow"></image>
+</view>
+
+<view>
+  <image class="LR" src="/images/left.png"></image>
+  <image class="power" src="/images/power2.png" bindtap="power"></image>
+  <image class="LR" src="/images/right.png"></image>
+</view>
+
+<view class="B">
+  <image class="B" src="/images/down.png" bindtap="Down_arrow"></image>
+</view>
+
+<view class="context" bindtap="modeTap">
+    <view class="request">
+      <view class="content">
+        <text>模式</text>
+      </view>
+    </view>
+</view>
+<!--
+<view class="bottom">
+  <view class="correct">
+    <view class="content">
+      正确
+    </view>
+  </view>
+  <view class="wrong">
+    <view class="content">
+      错误
+    </view>
+  </view>
+</view>
+-->
