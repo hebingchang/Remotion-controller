@@ -26,7 +26,7 @@ class SampleListener(Leap.Listener):
     mouse_speed_x_multiply = 85.4
     mouse_speed_y_multiply = 40.4
 
-    is_truely_fisting = False
+    was_fisting = False
     mousebegin = True
     width = 0
     height = 0
@@ -81,21 +81,27 @@ class SampleListener(Leap.Listener):
         finger_position = righthand.fingers[1].bone(Leap.Bone.TYPE_DISTAL).center
         hand_position = righthand.palm_position
 
-        is_fisting = (0.0 < point_distance(ring_position, hand_position) < 45.0 and 0.0 < point_distance(pinky_position,
-                                                                                              hand_position) < 45.0)
+        is_fisting = (not frame.hands.is_empty and 0.0 < point_distance(ring_position, hand_position) < 50.0 and 0.0 < point_distance(pinky_position,
+                                                                            hand_position) < 50.0)
+        #print '*'
+        #print is_fisting
+        #print self.was_fisting
+        #print frame.hands.is_empty
 
-        if is_fisting and not frame.hands.is_empty:
-            self.is_truely_fisting = True
-        elif frame.hands.is_empty and self.is_truely_fisting:
-            is_fisting = False;
-            self.is_truely_fisting = False
-        elif self.is_truely_fisting and not frame.hands.is_empty:
-            self.is_truely_fisting = False
+        if frame.hands.is_empty:
+            self.was_fisting = False;
+
+        if not frame.hands.is_empty and not is_fisting and self.was_fisting:
             send_cmd("c0_00")
+
+        if is_fisting:
+            self.was_fisting = True
+        else:
+            self.was_fisting = False
 
 
         for gesture in gestures:
-            if not self.is_truely_fisting:
+            if not self.was_fisting:
                 if gesture.type is Leap.Gesture.TYPE_SWIPE:
                     swipe = Leap.SwipeGesture(gesture)
                     swipe_direction = swipe.direction
