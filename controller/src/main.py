@@ -7,12 +7,13 @@ import win32api
 
 def send_cmd(cmd):
     r = requests.get("http://192.168.78.1:3000/?cmd="+cmd)
-    print r.content
+    print r.content + cmd
 
 class SampleListener(Leap.Listener):
     finger_names = ['Thumb', 'Index', 'Middle', 'Ring', 'Pinky']
     bone_names = ['Metacarpal', 'Proximal', 'Intermediate', 'Distal']
     flag = {"direction": -1, "count": 0, "swipe_starttime": 0, "swipe_lastendtime": 0, "last_direction": -1}
+#    fist_flag = {"fist_status":-1, "swipe_starttime": 0, "swipe_lastendtime": 0, "last_direction": -1}
     volume_flag = {"volume": 0, "volume_lastendtime": 0, "volume_starttime": 0, "last_diretion": -1}
     min_during_time = 1330000
     min_same_direction_time = 200000
@@ -25,7 +26,7 @@ class SampleListener(Leap.Listener):
     mouse_speed_x_multiply = 85.4
     mouse_speed_y_multiply = 40.4
 
-    is_mouse_controlled = False
+    is_truely_fisting = False
     mousebegin = True
     width = 0
     height = 0
@@ -83,9 +84,18 @@ class SampleListener(Leap.Listener):
         is_fisting = (0.0 < point_distance(ring_position, hand_position) < 45.0 and 0.0 < point_distance(pinky_position,
                                                                                               hand_position) < 45.0)
 
+        if is_fisting and not frame.hands.is_empty:
+            self.is_truely_fisting = True
+        elif frame.hands.is_empty and self.is_truely_fisting:
+            is_fisting = False;
+            self.is_truely_fisting = False
+        elif self.is_truely_fisting and not frame.hands.is_empty:
+            self.is_truely_fisting = False
+            send_cmd("c0_00")
+
 
         for gesture in gestures:
-            if not self.is_mouse_controlled:
+            if not self.is_truely_fisting:
                 if gesture.type is Leap.Gesture.TYPE_SWIPE:
                     swipe = Leap.SwipeGesture(gesture)
                     swipe_direction = swipe.direction
